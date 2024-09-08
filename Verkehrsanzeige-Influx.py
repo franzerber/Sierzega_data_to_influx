@@ -2,6 +2,7 @@
 #
 from influxdb import InfluxDBClient
 import json
+import os
 
 
 # example data
@@ -53,27 +54,17 @@ def genertate_json_body_item(var_ort,var_beschreibung,var_limit,var_richtung,var
         }
     return json_body_item 
 
+# List files in a specific directory
+files = os.listdir('messungen')
+number = 1
+for filename in files:
+    print(f"Number: {number} - Filename: {filename}")
 
+FILENAME_ID = input("Please enter the number of the file you want to process: ")
+file_name = files[int(FILENAME_ID) - 1]
 
-'''  
-    {
-        "measurement": "brushEvents",
-        "tags": {
-            "user": "Carol",
-            "brushId": "6c89f539-71c6-490d-a28d-6c5d84c0ee2f"
-        },
-        "time": "2018-03-29T8:04:00Z",
-        "fields": {
-            "duration": 132
-        }
-    },
-    }
-    var_limit,var_ort,var_beschreibung,,var_richtung,var_geschwindigkeitok,var_time,var_messung1,var_messung2,var_ueberschreitung,var_reduktion  
-'''
-with open(f'messungen/{filename}', 'r') as f:
+with open(f'messungen/{file_name}', 'r') as f:
     content = f.readlines()
-
-
 
 json_body=[]
 for i in content:
@@ -108,6 +99,8 @@ for i in content:
     json_body.append(result)
 
 client.write_points(json_body)
+
+print(f'done {len(json_body)} items written to InfluxDB')
 
 
 
