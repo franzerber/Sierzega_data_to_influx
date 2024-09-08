@@ -9,6 +9,9 @@ __pycache__/
 # Settings file
 settings.json
 
+# Messungen
+messungen/
+
 # Distribution / packaging
 .Python
 build/
