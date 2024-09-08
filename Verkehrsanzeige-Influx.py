@@ -1,17 +1,37 @@
 #Verkehrsanzeige-Influx
 #
 from influxdb import InfluxDBClient
-client = InfluxDBClient(host='10.81.81.1', port=8086, username='ferber', password='iot') 
+import json
+
+
+# example data
+'''
+	2020-01-13	22:56	49		-
+	2020-01-13	23:05	17	17	+
+	2020-01-13	23:06	39		-
+	2020-01-13	23:07	33	33	+
+'''
+
+
+with open('settings.json', 'r') as f:
+    settings = json.load(f)
+
+INFLUX_USER = settings['influx_user']
+INFLUX_PASSWORD = settings['influx_password']
+INFLUX_HOST = settings['influx_host']
+DATABSE_NAME = settings['database_name']
+
+client = InfluxDBClient(host=INFLUX_HOST, port=8086, username=INFLUX_USER, password=INFLUX_PASSWORD) 
 
 ## client.get_list_database()
 ## client.create_database('verkehrsmessung') 
 
-client.switch_database('verkehrsmessung') 
+client.switch_database(DATABSE_NAME) 
 
 var_limit=50
-var_ort='Perschling'
-var_beschreibung='Andrae'
-filename='5.9.2023-1.10.2023-Perschling-Andrae.txt'
+var_ort='Murstetten'
+var_beschreibung='Juli-August24'
+filename='Murstetten-2024-24-juli-bis-26-aug.txt'
 
 def genertate_json_body_item(var_ort,var_beschreibung,var_limit,var_richtung,var_geschwindigkeitok,var_time,var_messung1,var_messung2,var_ueberschreitung,var_reduktion):
     json_body_item = {
@@ -50,7 +70,7 @@ def genertate_json_body_item(var_ort,var_beschreibung,var_limit,var_richtung,var
     }
     var_limit,var_ort,var_beschreibung,,var_richtung,var_geschwindigkeitok,var_time,var_messung1,var_messung2,var_ueberschreitung,var_reduktion  
 '''
-with open(filename, 'r') as f:
+with open(f'messungen/{filename}', 'r') as f:
     content = f.readlines()
 
 
@@ -91,14 +111,4 @@ client.write_points(json_body)
 
 
 
-#string
-# 
-'''
-	2020-01-13	22:56	49		-
-	2020-01-13	23:05	17	17	+
-	2020-01-13	23:06	39		-
-	2020-01-13	23:07	33	33	+
-'''
-'''
-for item in liste:
-'''
+
